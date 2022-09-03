@@ -3,57 +3,119 @@ function preload() {
     font = loadFont('assets/Roboto-Bold.ttf');
 }
 
-let points;
-let bounds;
 function setup() {
     createCanvas(1000, 1000);
     stroke(0);
     fill(0, 0, 0);
 
-    points = font.textToPoints('A', 0, 0, 600, {
-        sampleFactor: 0.1,
-        simplifyThreshold: 0
-    });
-    bounds = font.textBounds(' A ', 0, 0, 600);
+    // // shuffle points array
+    // function shuffle(arr) {
+    //     var j, x, i;
+    //     for (i = arr.length - 1; i > 0; i--) {
+    //         j = Math.floor(Math.random() * (i + 1));
+    //         x = arr[i];
+    //         arr[i] = arr[j];
+    //         arr[j] = x;
+    //     }
+    //     return arr;
+    // }
+    // let shuffled = [...textA.points];
+    // shuffle(shuffled);
 
-    function shuffle(arr) {
-        var j, x, i;
-        for (i = arr.length - 1; i > 0; i--) {
-            j = Math.floor(Math.random() * (i + 1));
-            x = arr[i];
-            arr[i] = arr[j];
-            arr[j] = x;
-        }
-        return arr;
-    }
-
-    shuffle(points);
-
-    console.log(points[0]);
+    noLoop();
 }
-// line(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y)
 
 function draw() {
     background(225, 225, 225);
 
-    // draw vertices
-    beginShape(POINTS);
-    stroke(0, 0, 0);
-    strokeWeight(5);
-
-    translate((width / 2) - 300, (height / 2) + 300);
-
-    for (let i = 0; i < points.length; i++) {
-        vertex(points[i].x, points[i].y);
+    function CreatePointsFromString(str) {
+        this.points = font.textToPoints(str, 0, 0, 600, {
+            sampleFactor: 0.05,
+            simplifyThreshold: 0
+        });
     }
-    endShape();
+
+    function drawTextPoints(textObj) {
+        beginShape(POINTS);
+        stroke(0, 0, 0);
+        strokeWeight(5);
+
+        translate((width / 2) - 300, (height / 2) + 300);
+
+        for (let i = 0; i < textObj.points.length; i++) {
+            vertex(textObj.points[i].x, textObj.points[i].y);
+        }
+        endShape();
+    }
+
+    function drawLinesBetweenPoints(textObj, distance = 50) {
+        beginShape();
+        stroke(0, 0, 0);
+        strokeWeight(1);
+
+        for (let i = 0; i < textObj.points.length; i++) {
+            if (textObj.points[i + 1]) {
+                if (dist(textObj.points[i].x, textObj.points[i].y, textObj.points[i + 1].x, textObj.points[i + 1].y) < distance) {
+                    line(textObj.points[i].x, textObj.points[i].y, textObj.points[i + 1].x, textObj.points[i + 1].y);
+                }
+            }
+        }
+
+        endShape();
+    }
+
+    let textA = new CreatePointsFromString('A');
+    drawTextPoints(textA);
+    drawLinesBetweenPoints(textA);
+
+    // draw shape from vertices
+    // beginShape();
+    // stroke(0, 0, 0);
+    // strokeWeight(1);
+
+    // let closestDistance;
+    // let closestPoint;
+    // for (let i = 0; i < points.length; i++) {
+    //     let distance = dist(points[i].x, points[i].y, points[points.length - 1].x, points[points.length - 1].y);
+    //
+    //     if (distance !== 0) {
+    //         if (distance < closestDistance || !closestDistance) {
+    //             closestDistance = distance;
+    //             closestPoint = points[i];
+    //
+    //             console.log(closestDistance);
+    //         }
+    //     }
+    // }
+    // console.log(closestPoint);
+
+    // strokeWeight(10)
+    // line(points[0].x, points[0].y, closestPoint.x, closestPoint.y);
+
+    // for (let i = 0; i < 75; i++) {
+    //     if (points[i + 1]) { // draw line if next point exists
+    //         line(textA.points[i].x, textA.points[i].y, textA.points[i + 1].x, textA.points[i + 1].y);
+    //     } else if (!textA.points[i + 1]) { // if next point doesn't exist, draw line from the last point to the closest point
+    //         line(textA.points[textA.points.length - 1].x, textA.points[textA.points.length - 1].y, textA.points[0].x, textA.points[0].y);
+    //     }
+    // }
+    // endShape();
 
     // draw lines
-    beginShape();
-    stroke(100, 100, 100);
-    strokeWeight(1);
-    for (let i = 0; i < points.length; i++) {
-        line(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y)
-    }
-    endShape();
+    // beginShape();
+    // stroke(100, 100, 100);
+    // strokeWeight(1);
+    //
+    // let min = 0;
+    // let max = shuffled.length;
+    // for (let i = 0; i < 10; i++) {
+    //     let rand = Math.floor((Math.random() * ((max + 1) - min)) + min);
+    //
+    //     if (shuffled[i + 1] && shuffled[rand]) {
+    //         line(shuffled[rand].x, shuffled[rand].y, shuffled[rand + 1].x, shuffled[rand + 1].y)
+    //     }
+    // }
+    // endShape();
+
+    console.log('done');
 }
