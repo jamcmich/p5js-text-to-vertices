@@ -25,6 +25,8 @@ function setup() {
     noLoop();
 }
 
+
+// TODO: Make each function a property of a parent constructor
 function draw() {
     background(225, 225, 225);
 
@@ -35,29 +37,25 @@ function draw() {
         });
     }
 
-    function drawTextPoints(textObj) {
+    function drawPoints(points, color = [0, 0, 0], weight = 5) {
         beginShape(POINTS);
-        stroke(0, 0, 0);
-        strokeWeight(5);
 
         translate((width / 2) - 300, (height / 2) + 300);
 
-        // draw points
-        for (let i = 0; i < textObj.points.length; i++) {
-            vertex(textObj.points[i].x, textObj.points[i].y);
-        }
+        points.forEach((point) => {
+            stroke(...color);
+            strokeWeight(weight);
 
-        // add edges property to each point in textObj
-        textObj.points.forEach((point) => {
+            vertex(point.x, point.y);
+
             point.edges = 0;
         })
-
         endShape();
     }
 
-    function drawLinesBetweenPoints(textObj, distance = 50) {
+    function drawLines(textObj, color= [0, 0, 0], distance = 50) {
         beginShape();
-        stroke(0, 0, 0);
+        stroke(...color);
         strokeWeight(1);
 
         for (let i = 0; i < textObj.points.length; i++) {
@@ -77,15 +75,26 @@ function draw() {
         endShape();
     }
 
-    let textA = new CreatePointsFromString('A');
-    drawTextPoints(textA);
-    drawLinesBetweenPoints(textA);
+    function findDisconnectedPoints(textObj, color = [0, 0, 0], threshold) {
+        beginShape(POINTS);
 
-    for (let p in textA.points) {
-        if (textA.points[p].edges < 2) {
-            console.log(textA.points[p])
+        for (let i = 0; i < textA.points.length; i++) {
+            if (textA.points[i].edges < threshold) {
+                stroke(255, 0, 0);
+                strokeWeight(5);
+
+                vertex(textA.points[i].x, textA.points[i].y);
+
+                console.log(textA.points[i]);
+            }
         }
+        endShape();
     }
+
+    let textA = new CreatePointsFromString('A');
+    drawPoints(textA.points, [100, 100, 100]);
+    drawLines(textA, [100, 100 ,100]);
+    findDisconnectedPoints(textA, [255, 0, 0], 2);
 
     // draw shape from vertices
     // beginShape();
