@@ -42,9 +42,16 @@ function draw() {
 
         translate((width / 2) - 300, (height / 2) + 300);
 
+        // draw points
         for (let i = 0; i < textObj.points.length; i++) {
             vertex(textObj.points[i].x, textObj.points[i].y);
         }
+
+        // add edges property to each point in textObj
+        textObj.points.forEach((point) => {
+            point.edges = 0;
+        })
+
         endShape();
     }
 
@@ -57,6 +64,12 @@ function draw() {
             if (textObj.points[i + 1]) {
                 if (dist(textObj.points[i].x, textObj.points[i].y, textObj.points[i + 1].x, textObj.points[i + 1].y) < distance) {
                     line(textObj.points[i].x, textObj.points[i].y, textObj.points[i + 1].x, textObj.points[i + 1].y);
+                    textObj.points[i].edges += 1;
+                    textObj.points[i + 1].edges += 1;
+
+                    // if (textObj.points[i] === textObj.points[textObj.points.length - 1]) {
+                    //     line(textObj.points[i].x, textObj.points[i].y, textObj.points[0].x, textObj.points[0].y);
+                    // }
                 }
             }
         }
@@ -67,6 +80,12 @@ function draw() {
     let textA = new CreatePointsFromString('A');
     drawTextPoints(textA);
     drawLinesBetweenPoints(textA);
+
+    for (let p in textA.points) {
+        if (textA.points[p].edges < 2) {
+            console.log(textA.points[p])
+        }
+    }
 
     // draw shape from vertices
     // beginShape();
