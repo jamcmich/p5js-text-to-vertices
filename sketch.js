@@ -4,7 +4,7 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(1000, 1000);
+    createCanvas(2000, 1000);
     stroke(0);
     fill(0, 0, 0);
 
@@ -40,7 +40,7 @@ function draw() {
     function drawPoints(points, color = [0, 0, 0], weight = 5) {
         beginShape(POINTS);
 
-        translate((width / 2) - 300, (height / 2) + 300);
+        translate((width / 2) - 1000, (height / 2) + 300);
 
         points.forEach((point) => {
             stroke(...color);
@@ -59,15 +59,21 @@ function draw() {
         strokeWeight(1);
 
         for (let i = 0; i < textObj.points.length; i++) {
+            // if the next node exists
             if (textObj.points[i + 1]) {
                 if (dist(textObj.points[i].x, textObj.points[i].y, textObj.points[i + 1].x, textObj.points[i + 1].y) < distance) {
                     line(textObj.points[i].x, textObj.points[i].y, textObj.points[i + 1].x, textObj.points[i + 1].y);
                     textObj.points[i].edges += 1;
                     textObj.points[i + 1].edges += 1;
+                } else {
+                    // look for the closest neighbor
+                    for (let j = 0; j < textObj.points.length; j++) {
+                        if (dist(textObj.points[i].x, textObj.points[i].y, textObj.points[j].x, textObj.points[j].y) < distance) {
+                            line(textObj.points[i].x, textObj.points[i].y, textObj.points[j].x, textObj.points[j].y);
 
-                    // if (textObj.points[i] === textObj.points[textObj.points.length - 1]) {
-                    //     line(textObj.points[i].x, textObj.points[i].y, textObj.points[0].x, textObj.points[0].y);
-                    // }
+                            console.log('test');
+                        }
+                    }
                 }
             }
         }
@@ -91,9 +97,9 @@ function draw() {
         endShape();
     }
 
-    let textA = new CreatePointsFromString('A');
+    let textA = new CreatePointsFromString('Hello');
     drawPoints(textA.points, [100, 100, 100]);
-    drawLines(textA, [100, 100 ,100]);
+    drawLines(textA, [100, 100 ,100], 25);
     findDisconnectedPoints(textA, [255, 0, 0], 2);
 
     // draw shape from vertices
