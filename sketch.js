@@ -4,7 +4,7 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(1000, 1000);
+    createCanvas(2000, 1000);
     stroke(0);
     fill(0, 0, 0);
 
@@ -25,6 +25,8 @@ function setup() {
     noLoop();
 }
 
+
+// TODO: Make each function a property of a parent constructor
 function draw() {
     background(225, 225, 225);
 
@@ -35,41 +37,43 @@ function draw() {
         });
     }
 
-    function drawTextPoints(textObj) {
+    function drawPoints(points, color = [0, 0, 0], weight = 5) {
         beginShape(POINTS);
-        stroke(0, 0, 0);
-        strokeWeight(5);
 
-        translate((width / 2) - 300, (height / 2) + 300);
+        translate((width / 2) - 1000, (height / 2) + 300);
 
-        // draw points
-        for (let i = 0; i < textObj.points.length; i++) {
-            vertex(textObj.points[i].x, textObj.points[i].y);
-        }
+        points.forEach((point) => {
+            stroke(...color);
+            strokeWeight(weight);
 
-        // add edges property to each point in textObj
-        textObj.points.forEach((point) => {
+            vertex(point.x, point.y);
+
             point.edges = 0;
         })
-
         endShape();
     }
 
-    function drawLinesBetweenPoints(textObj, distance = 50) {
+    function drawLines(textObj, color= [0, 0, 0], distance = 50) {
         beginShape();
-        stroke(0, 0, 0);
+        stroke(...color);
         strokeWeight(1);
 
         for (let i = 0; i < textObj.points.length; i++) {
+            // if the next node exists
             if (textObj.points[i + 1]) {
                 if (dist(textObj.points[i].x, textObj.points[i].y, textObj.points[i + 1].x, textObj.points[i + 1].y) < distance) {
                     line(textObj.points[i].x, textObj.points[i].y, textObj.points[i + 1].x, textObj.points[i + 1].y);
                     textObj.points[i].edges += 1;
                     textObj.points[i + 1].edges += 1;
+                } else {
+                    // look for the closest neighbor
+                    for (let j = 0; j < textObj.points.length; j++) {
+                        if (dist(textObj.points[i].x, textObj.points[i].y, textObj.points[j].x, textObj.points[j].y) < distance) {
+                            line(textObj.points[i].x, textObj.points[i].y, textObj.points[j].x, textObj.points[j].y);
 
-                    // if (textObj.points[i] === textObj.points[textObj.points.length - 1]) {
-                    //     line(textObj.points[i].x, textObj.points[i].y, textObj.points[0].x, textObj.points[0].y);
-                    // }
+                            console.log('test');
+                        }
+                    }
                 }
             }
         }
@@ -77,15 +81,26 @@ function draw() {
         endShape();
     }
 
-    let textA = new CreatePointsFromString('A');
-    drawTextPoints(textA);
-    drawLinesBetweenPoints(textA);
+    function findDisconnectedPoints(textObj, color = [0, 0, 0], threshold) {
+        beginShape(POINTS);
 
-    for (let p in textA.points) {
-        if (textA.points[p].edges < 2) {
-            console.log(textA.points[p])
+        for (let i = 0; i < textA.points.length; i++) {
+            if (textA.points[i].edges < threshold) {
+                stroke(255, 0, 0);
+                strokeWeight(5);
+
+                vertex(textA.points[i].x, textA.points[i].y);
+
+                console.log(textA.points[i]);
+            }
         }
+        endShape();
     }
+
+    let textA = new CreatePointsFromString('Hello');
+    drawPoints(textA.points, [100, 100, 100]);
+    drawLines(textA, [100, 100 ,100], 25);
+    findDisconnectedPoints(textA, [255, 0, 0], 2);
 
     // draw shape from vertices
     // beginShape();
